@@ -60,6 +60,7 @@ export default {
       })
     },
     getAllCommands () {
+      console.log(this.$electron)
       this.$db.find({}, (err, docs) => {
         if (err) {
           console.log(err)

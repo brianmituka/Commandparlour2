@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu, shell } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -16,6 +16,42 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 function createWindow () {
+  const template = [
+    {
+      label: 'Command Parlour',
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        {
+          label: 'Test',
+          click: () => { console.log('plop') }
+        },
+        {
+          label: 'Learn more',
+          click: () => { shell.openExternal('https://github.com/brianmituka') }
+        },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' }
+      ]
+    },
+    {
+      role: 'window',
+      submenu: [
+        { role: 'close' },
+        { role: 'minimize' },
+        { type: 'separator' },
+        { role: 'front' }
+      ]
+    }
+  ]
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
   /**
    * Initial window options
    */
