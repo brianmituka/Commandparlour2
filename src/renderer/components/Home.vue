@@ -1,30 +1,65 @@
 /* eslint-disable */
 <template>
-<div class="main">
-  <div class="header">
-<input placeholder="Search commands" class="search" id="search">
-</div>
-<div class="recent">
-    <h3>Add a command</h3>
-    <input type="text" class="commandfields" v-model="command">
-    <input type="text" class="commandfields" v-model="description">
-    <input type="text" class="commandfields" v-model="tag"> 
-    <button class="savebutton" @click ="addCommand">Save command</button>
+<div>
+
+<!-- top bar   -->
+<vs-row vs-justify="center" class="topbar">
+  <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9"> 
+<vs-input icon-after icon="search" placeholder="Search" size="large"/>
+  </vs-col>  
+  <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="3"> 
+<vs-button color="primary" text-color icon="add" type="border" @click="addModal=true" class="addbutton">Add new </vs-button>
+  </vs-col> 
+</vs-row>
+
+<!-- saved stuff section -->
+<vs-row  vs-justify="center">
+  <vs-col v-for="(command, index) in commands"  :key="index" vs-w="6" class="savedcards" vs-sm="6" vs-justify="center" vs-align="center">
+      <vs-card actionable class="cardx" fixed-height>
+        <div slot="header">
+          <h3 >
+           {{command.title}}
+          </h3>
+        </div>
+        <div slot="media">
+          <!-- <img :src="$withBase('/card.png')"> -->
+        </div>
+        <div>
+          <span >{{command.description}}</span>
+        </div>
+        <div slot="footer">
+          <vs-row vs-justify="flex-end">
+            <vs-button icon="edit" @click="editCommand(command)" color="primary" type="gradient" >Edit</vs-button>
+          </vs-row>
+        </div>
+      </vs-card>
+    </vs-col>
+</vs-row>
+
+
+<!-- Add Modal/Edit Modal -->
+<vs-popup classContent="popup-example"  :title="formTitle" :active.sync="addModal">
+   <vs-row vs-justify="center">
+     <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="12">
+      <vs-input class="inputx" placeholder="Title" v-model="editedCommand.title"/>
+     </vs-col>
+   </vs-row>
+   <vs-row vs-justify="center" class="topbar">
+     <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9">
+       <vs-input  class="inputx" placeholder="Tag" v-model="editedCommand.tag"/>
+     </vs-col>
+   </vs-row>
+   <vs-row vs-justify="center" class="topbar">
+     <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9">
+       <vs-input  class="inputx" placeholder="Description" v-model="editedCommand.description"/>
+     </vs-col>
+   </vs-row>
+      
+      
+      <vs-button icon="save" @click="addCommand" class="addbutton"  color="primary" type="border">save</vs-button>
+    </vs-popup>
 </div>
 
-<div>
-<h1>Saved commands</h1>
-<div v-for="(command, index) in commands"  :key="index" class="saved brick">
- <h3>Name: {{command.command}}</h3>
- <h3>Tag: {{command.tag}}</h3>
- <h3>Description: {{command.description}}</h3>
- <h3>Created: {{command.createdAt}}</h3>
- <h3>Updated: {{command.updatedAt}}</h3>
-</div>
-</div>
-<div>
-</div>  
-</div>
 </template>
 <script>
 // const DataStore = require('nedb')
@@ -35,17 +70,28 @@ export default {
   name: 'home',
   data () {
     return {
-      command: '',
+      title: '',
       tag: '',
       description: '',
-      commands: []
+      commands: [],
+      addModal: false,
+      editedIndex: -1,
+      // defaultCommand: {
+      //   title: '',
+      //   tag: '',
+      //   description: ''
+      // },
+      editedCommand: {
+        title: '',
+        tag: '',
+        description: ''
+      }
     }
   },
   methods: {
     addCommand () {
-      console.log('I am working')
       const commandObject = {
-        command: this.command,
+        title: this.title,
         tag: this.tag,
         description: this.description
       }
@@ -53,7 +99,7 @@ export default {
         if (err) {
           alert('An error occured')
         } else {
-          alert(newDoc.command + ' Created')
+          alert(newDoc.title + ' Created')
         }
         console.log(newDoc)
         console.log(err)
@@ -71,59 +117,52 @@ export default {
           })
         }
       })
+    },
+    editCommand (command) {
+      this.editedIndex = this.commands.indexOf(command)
+      this.editedCommand = Object.assign({}, command)
+      this.addModal = true
     }
   },
+  computed: {
+    formTitle () {
+      console.log(this.editedIndex)
+      return this.editedIndex === -1 ? 'Add a command' : 'Edit Command'
+    }
+  },
+
   beforeMount () {
     this.getAllCommands()
+  },
+  mounted () {
+    const icon = document.querySelectorAll('.vs-popup--close')
+    console.log(`#### ${icon}`);
+    [...icon].forEach(element => {
+      element.addEventListener('click', () => {
+        this.editedIndex = -1
+        this.editedCommand = {}
+        console.log(this.editedIndex)
+        console.log('x clicked')
+      })
+    })
   }
 }
 </script>
 
 <style scoped>
  @import url('https://fonts.googleapis.com/css?family=Dosis:400,500,600,700,800');
+ .topbar{
+   margin-top: 20px;
+   margin-bottom: 20px;
+ }
+ .addbutton{
+   font-size: 18px;
+   font-weight: 500;
+ }
+ .savedcards{
+   margin: 15px;
+ }
 
- .brick {
-      height: 200.516px;
-      position: relative;
-      min-height: 1px;
-      padding-left: 25px;
-      padding-right: 25px;
-      width: 463.328px;
-    }
-
- body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Dosis, sans-serif;
-      font-size: 16px;
-      line-height: 1.42857143;
-      color: #435b71;
-      background-color: #f8f8f8;
-    }
-.main{
-    display: flex;
-    align-items: center;
-    /* justify-content: center; */
-    flex-direction: column;
-}
-.header{
-    max-width: 50%;
-}
-.search{
-    border-radius:5px;
-}
-.recent{
-    display: flex;
-    flex-direction: column;
-}
-.commandfields{
-    margin-top: 20px;
-    border-radius: 5px;
-}
-.savebutton{
-    margin-top: 15px;
-}
+ 
 </style>
 

@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, Menu, shell } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -22,31 +22,22 @@ function createWindow () {
       submenu: [
         { role: 'about' },
         { type: 'separator' },
-        {
-          label: 'Test',
-          click: () => { console.log('plop') }
-        },
-        {
-          label: 'Learn more',
-          click: () => { shell.openExternal('https://github.com/brianmituka') }
-        },
-        { type: 'separator' },
         { role: 'quit' }
       ]
     },
     {
       label: 'View',
       submenu: [
-        { role: 'reload' }
+        { role: 'reload' },
+        { type: 'separator' },
+        { role: 'toggledevtools' }
       ]
     },
     {
       role: 'window',
       submenu: [
         { role: 'close' },
-        { role: 'minimize' },
-        { type: 'separator' },
-        { role: 'front' }
+        { role: 'minimize' }
       ]
     }
   ]
@@ -56,7 +47,7 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 803,
     useContentSize: true,
     width: 1000
   })
