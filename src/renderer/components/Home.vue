@@ -5,7 +5,7 @@
 <!-- top bar   -->
 <vs-row vs-justify="center" class="topbar">
   <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9"> 
-<vs-input icon-after icon="search" placeholder="Search" size="large"/>
+<vs-input icon-after icon="search" placeholder="Search" v-model="search" size="large"/>
   </vs-col>  
   <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="3"> 
 <vs-button color="primary" text-color icon="add" type="border" @click="addModal=true" class="addbutton">Add new </vs-button>
@@ -14,18 +14,18 @@
 
 <!-- saved stuff section -->
 <vs-row  vs-justify="center">
-  <vs-col v-for="(command, index) in commands"  :key="index" vs-w="6" class="savedcards" vs-sm="6" vs-justify="center" vs-align="center">
+  <vs-col v-for="(command, index) in filteredCommands"  :key="index" vs-w="6" class="savedcards" vs-sm="6" vs-justify="center" vs-align="center">
       <vs-card actionable class="cardx" fixed-height>
         <div slot="header">
           <h3 >
            {{command.title}}
           </h3>
         </div>
-        <div slot="media">
-          <!-- <img :src="$withBase('/card.png')"> -->
-        </div>
         <div>
           <span >{{command.description}}</span>
+        </div>
+        <div>
+          <p> <i icon="label"></i> {{command.tag}}</p>
         </div>
         <div slot="footer">
           <vs-row vs-justify="flex-end">
@@ -76,11 +76,7 @@ export default {
       commands: [],
       addModal: false,
       editedIndex: -1,
-      // defaultCommand: {
-      //   title: '',
-      //   tag: '',
-      //   description: ''
-      // },
+      search: '',
       editedCommand: {
         title: '',
         tag: '',
@@ -91,15 +87,16 @@ export default {
   methods: {
     addCommand () {
       const commandObject = {
-        title: this.title,
-        tag: this.tag,
-        description: this.description
+        title: this.editedCommand.title,
+        tag: this.editedCommand.tag,
+        description: this.editedCommand.description
       }
       this.$db.insert(commandObject, function (err, newDoc) {
         if (err) {
           alert('An error occured')
         } else {
           alert(newDoc.title + ' Created')
+          this.editedCommand = {}
         }
         console.log(newDoc)
         console.log(err)
@@ -128,6 +125,11 @@ export default {
     formTitle () {
       console.log(this.editedIndex)
       return this.editedIndex === -1 ? 'Add a command' : 'Edit Command'
+    },
+    filteredCommands: function () {
+      return this.commands.filter((command) => {
+        return command.tag.toLowerCase().match(this.search)
+      })
     }
   },
 
@@ -135,6 +137,7 @@ export default {
     this.getAllCommands()
   },
   mounted () {
+    // Add event listener to the modal close button so as to switch the formTitle
     const icon = document.querySelectorAll('.vs-popup--close')
     console.log(`#### ${icon}`);
     [...icon].forEach(element => {
@@ -151,6 +154,9 @@ export default {
 
 <style scoped>
  @import url('https://fonts.googleapis.com/css?family=Dosis:400,500,600,700,800');
+ *{
+   font-family: Dosis;
+ }
  .topbar{
    margin-top: 20px;
    margin-bottom: 20px;
