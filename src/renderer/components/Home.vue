@@ -5,7 +5,7 @@
 <!-- top bar   -->
 <vs-row vs-justify="center" class="topbar">
   <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9"> 
-<vs-input icon-after icon="search" placeholder="Search" size="large"/>
+<vs-input icon-after icon="search" placeholder="Search" v-model="search" size="large"/>
   </vs-col>  
   <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="3"> 
 <vs-button color="primary" text-color icon="add" type="border" @click="addModal=true" class="addbutton">Add new </vs-button>
@@ -14,7 +14,7 @@
 
 <!-- saved stuff section -->
 <vs-row  vs-justify="center">
-  <vs-col v-for="(command, index) in commands"  :key="index" vs-w="6" class="savedcards" vs-sm="6" vs-justify="center" vs-align="center">
+  <vs-col v-for="(command, index) in filteredCommands"  :key="index" vs-w="6" class="savedcards" vs-sm="6" vs-justify="center" vs-align="center">
       <vs-card actionable class="cardx" fixed-height>
         <div slot="header">
           <h3 >
@@ -76,16 +76,12 @@ export default {
       commands: [],
       addModal: false,
       editedIndex: -1,
-      // defaultCommand: {
-      //   title: '',
-      //   tag: '',
-      //   description: ''
-      // },
       editedCommand: {
         title: '',
         tag: '',
         description: ''
-      }
+      },
+      search: ''
     }
   },
   methods: {
@@ -128,6 +124,11 @@ export default {
     formTitle () {
       console.log(this.editedIndex)
       return this.editedIndex === -1 ? 'Add a command' : 'Edit Command'
+    },
+    filteredCommands: function () {
+      return this.commands.filter((command) => {
+        return command.tag.toLowerCase().match(this.search)
+      })
     }
   },
 
