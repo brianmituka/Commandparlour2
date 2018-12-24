@@ -78,12 +78,12 @@ export default {
       commands: [],
       addModal: false,
       editedIndex: -1,
-      search: '',
       editedCommand: {
         title: '',
         tag: '',
         description: ''
-      }
+      },
+      search: ''
     }
   },
   methods: {
