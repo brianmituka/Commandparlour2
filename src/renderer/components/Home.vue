@@ -52,11 +52,13 @@
    <vs-row vs-justify="center" class="topbar">
      <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9">
        <vs-input  class="inputx" placeholder="Description" v-model="editedCommand.description"/>
+       {{editedCommand._id}}
      </vs-col>
    </vs-row>
+     
       
-      
-      <vs-button icon="save" @click="addCommand" class="addbutton"  color="primary" type="border">save</vs-button>
+      <vs-button v-if="editedIndex == -1" icon="save" @click="addCommand" class="addbutton"  color="primary" type="border">save</vs-button>
+      <vs-button  v-if="editedIndex != -1 " icon="save" @click="updateCommand" class="addbutton"  color="primary" type="border">Update</vs-button>
     </vs-popup>
 </div>
 
@@ -119,6 +121,22 @@ export default {
       this.editedIndex = this.commands.indexOf(command)
       this.editedCommand = Object.assign({}, command)
       this.addModal = true
+    },
+    updateCommand () {
+      console.log('function entry')
+      
+      console.log('update begin')
+      this.$db.update({_id: this.editedCommand._id}, {tag: this.editedCommand.tag, title: this.editedCommand.title, description: this.editedCommand.description}, {}, function (err, numReplaced) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log('Number updated', numReplaced)
+          console.log('no error with the updated. it\'s done maybe')
+          console.log(this.editedCommand.title)
+          console.log(this.editedCommand.tag)
+          console.log(this.editedCommand.description)
+        }
+      })
     }
   },
   computed: {
