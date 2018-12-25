@@ -39,6 +39,16 @@ function createWindow () {
         { role: 'close' },
         { role: 'minimize' }
       ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'cut' },
+        { type: 'separator' },
+        { role: 'copy' },
+        { type: 'separator' },
+        { role: 'paste' }
+      ]
     }
   ]
   const menu = Menu.buildFromTemplate(template)
