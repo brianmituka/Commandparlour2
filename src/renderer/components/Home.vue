@@ -52,11 +52,18 @@
    <vs-row vs-justify="center" class="topbar">
      <vs-col vs-type="flex" vs-justify="center" vs-align="center" vs-w="9">
        <vs-input  class="inputx" placeholder="Description" v-model="editedCommand.description"/>
-       {{editedCommand._id}}
      </vs-col>
    </vs-row>
-      <vs-button v-if="editedIndex == -1" icon="save" @click="addCommand" class="addbutton"  color="primary" type="border">save</vs-button>
-      <vs-button  v-if="editedIndex != -1 " icon="save" @click="updateCommand" class="addbutton"  color="primary" type="border">Update</vs-button>
+   <vs-row>
+     <vs-col vs-type="flex" vs-w="9">
+        <vs-button v-if="editedIndex == -1" icon="save" @click="addCommand" class="addbutton"  color="primary" type="border">Save</vs-button>
+         <vs-button  v-if="editedIndex != -1 " icon="save" @click="updateCommand" class="addbutton"  color="primary" type="border">Update</vs-button>
+     </vs-col>
+     <vs-col vs-type="flex" vs-w="3">
+       <vs-button v-if="editedIndex != -1" icon="save" @click="addCommand" class="addbutton"  color="danger" type="border">Delete</vs-button>
+     </vs-col>
+   </vs-row>
+      
     </vs-popup>
 </div>
 
@@ -77,7 +84,8 @@ export default {
         tag: '',
         description: ''
       },
-      search: ''
+      search: '',
+      replaced: 0
     }
   },
   methods: {
@@ -87,19 +95,26 @@ export default {
         tag: this.editedCommand.tag,
         description: this.editedCommand.description
       }
-      this.$db.insert(commandObject, function (err, newDoc) {
+      this.$db.insert(commandObject, (err, newDoc) => {
         if (err) {
           alert('An error occured')
+          return
         } else {
-          alert(newDoc.title + ' Created')
+          console.log(newDoc.title + ' Created')
           this.editedCommand = {}
         }
-        console.log(newDoc)
+        console.log('I am new' + newDoc)
         console.log(err)
+      })
+      this.addModal = false
+      this.$notify({
+        group: 'foo',
+        title: 'Command Created',
+        text: `Command successfully Created`
       })
     },
     getAllCommands () {
-      console.log(this.$electron)
+      // console.log(this.$electron)
       this.$db.find({}, (err, docs) => {
         if (err) {
           console.log(err)
@@ -117,20 +132,35 @@ export default {
       this.addModal = true
     },
     updateCommand () {
+      // let replaced
       console.log('update begin')
       this.$db.update({_id: this.editedCommand._id}, {tag: this.editedCommand.tag, title: this.editedCommand.title, description: this.editedCommand.description}, {}, function (err, numReplaced) {
         if (err) {
           console.log(err)
         } else {
           console.log('Documents updated:', numReplaced)
-          console.log('Successfully updated')
+          // this.replaced = numReplaced
+          if (numReplaced > 0) {
+            console.log('Successfully updated')
+            // this.$notify({
+            //   group: 'foo',
+            //   title: 'Important message',
+            //   text: 'Hello user! This is a notification!'
+            // })
+          }
         }
+      })
+      this.addModal = false
+      this.$notify({
+        group: 'foo',
+        title: 'Command Updated',
+        text: `${this.editedCommand.title} updated`
       })
     }
   },
   computed: {
     formTitle () {
-      console.log(this.editedIndex)
+      // console.log(this.editedIndex)
       return this.editedIndex === -1 ? 'Add a command' : 'Edit Command'
     },
     filteredCommands: function () {
@@ -145,14 +175,14 @@ export default {
   },
   mounted () {
     // Add event listener to the modal close button so as to switch the formTitle
-    const icon = document.querySelectorAll('.vs-popup--close')
-    console.log(`#### ${icon}`);
+    const icon = document.querySelectorAll('.vs-popup--close');
+    // console.log(`#### ${icon}`);
     [...icon].forEach(element => {
       element.addEventListener('click', () => {
         this.editedIndex = -1
         this.editedCommand = {}
-        console.log(this.editedIndex)
-        console.log('x clicked')
+        // console.log(this.editedIndex)
+        // console.log('x clicked')
       })
     })
   }
