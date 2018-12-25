@@ -60,7 +60,7 @@
          <vs-button  v-if="editedIndex != -1 " icon="save" @click="updateCommand" class="addbutton"  color="primary" type="border">Update</vs-button>
      </vs-col>
      <vs-col vs-type="flex" vs-w="3">
-       <vs-button v-if="editedIndex != -1" icon="save" @click="addCommand" class="addbutton"  color="danger" type="border">Delete</vs-button>
+       <vs-button v-if="editedIndex != -1" icon="save" @click="deleteCommand" class="addbutton"  color="danger" type="border">Delete</vs-button>
      </vs-col>
    </vs-row>
       
@@ -102,15 +102,15 @@ export default {
         } else {
           console.log(newDoc.title + ' Created')
           this.editedCommand = {}
+          this.addModal = false
+          this.$notify({
+            group: 'foo',
+            title: 'Command Created',
+            text: `${newDoc.title} successfully Created`
+          })
         }
         console.log('I am new' + newDoc)
         console.log(err)
-      })
-      this.addModal = false
-      this.$notify({
-        group: 'foo',
-        title: 'Command Created',
-        text: `Command successfully Created`
       })
     },
     getAllCommands () {
@@ -132,9 +132,8 @@ export default {
       this.addModal = true
     },
     updateCommand () {
-      // let replaced
       console.log('update begin')
-      this.$db.update({_id: this.editedCommand._id}, {tag: this.editedCommand.tag, title: this.editedCommand.title, description: this.editedCommand.description}, {}, function (err, numReplaced) {
+      this.$db.update({_id: this.editedCommand._id}, {tag: this.editedCommand.tag, title: this.editedCommand.title, description: this.editedCommand.description}, {}, (err, numReplaced) => {
         if (err) {
           console.log(err)
         } else {
@@ -142,19 +141,29 @@ export default {
           // this.replaced = numReplaced
           if (numReplaced > 0) {
             console.log('Successfully updated')
-            // this.$notify({
-            //   group: 'foo',
-            //   title: 'Important message',
-            //   text: 'Hello user! This is a notification!'
-            // })
+            this.addModal = false
+            this.$notify({
+              group: 'foo',
+              title: 'Command Update',
+              text: `${this.editedCommand.title} updated`
+            })
           }
         }
       })
-      this.addModal = false
-      this.$notify({
-        group: 'foo',
-        title: 'Command Updated',
-        text: `${this.editedCommand.title} updated`
+    },
+    deleteCommand () {
+      this.$db.remove({ _id: this.editedCommand._id }, {}, (err, numRemoved) => {
+        if (err) {
+          console.log(err)
+        } else if (numRemoved > 0) {
+          this.addModal = false
+          this.$notify({
+            group: 'foo',
+            title: 'Command Update',
+            text: `${this.editedCommand.title} removed`,
+            type: 'warn'
+          })
+        }
       })
     }
   },
