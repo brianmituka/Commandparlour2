@@ -55,8 +55,6 @@
        {{editedCommand._id}}
      </vs-col>
    </vs-row>
-     
-      
       <vs-button v-if="editedIndex == -1" icon="save" @click="addCommand" class="addbutton"  color="primary" type="border">save</vs-button>
       <vs-button  v-if="editedIndex != -1 " icon="save" @click="updateCommand" class="addbutton"  color="primary" type="border">Update</vs-button>
     </vs-popup>
@@ -64,10 +62,6 @@
 
 </template>
 <script>
-// const DataStore = require('nedb')
-// const db = new DataStore({
-//   inMemoryOnly: true
-// })
 export default {
   name: 'home',
   data () {
@@ -123,18 +117,13 @@ export default {
       this.addModal = true
     },
     updateCommand () {
-      console.log('function entry')
-      
       console.log('update begin')
       this.$db.update({_id: this.editedCommand._id}, {tag: this.editedCommand.tag, title: this.editedCommand.title, description: this.editedCommand.description}, {}, function (err, numReplaced) {
         if (err) {
           console.log(err)
         } else {
-          console.log('Number updated', numReplaced)
-          console.log('no error with the updated. it\'s done maybe')
-          console.log(this.editedCommand.title)
-          console.log(this.editedCommand.tag)
-          console.log(this.editedCommand.description)
+          console.log('Documents updated:', numReplaced)
+          console.log('Successfully updated')
         }
       })
     }
@@ -169,7 +158,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
  @import url('https://fonts.googleapis.com/css?family=Dosis:400,500,600,700,800');
  *{
@@ -186,7 +174,5 @@ export default {
  .savedcards{
    margin: 15px;
  }
-
- 
 </style>
 
