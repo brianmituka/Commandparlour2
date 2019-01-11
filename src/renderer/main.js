@@ -9,6 +9,7 @@ import db from './datastore'
 import 'vuesax/dist/vuesax.css'
 import 'material-icons/iconfont/material-icons.css'
 import Notifications from 'vue-notification'
+// import clipboard from 'clipboard'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
@@ -17,6 +18,7 @@ Vue.prototype.$db = db
 // Vue.prototype.$notify = Notifications
 Vue.use(Vuesax)
 Vue.use(Notifications)
+// Vue.use(clipboard)
 
 /* eslint-disable no-new */
 new Vue({
