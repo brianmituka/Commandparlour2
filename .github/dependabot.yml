@@ -1,0 +1,15 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "02:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: electron-builder
+    versions:
+    - 22.9.1
+  - dependency-name: chalk
+    versions:
+    - 4.1.0
