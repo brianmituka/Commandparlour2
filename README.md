@@ -1,5 +1,5 @@
 # commandpalour2
-> save commands and short notes for later use locally.
+> A simple electron and vue app for saving commands and short notes for later use.
 
 #### Demo
 
